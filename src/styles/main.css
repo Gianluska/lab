@@ -55,14 +55,22 @@ span {
 }
 
 #webgl {
-  width: 100%;
-  max-width: 625px;
+  position: absolute;
+  left: 0;
+  top: 48px;
+  bottom: 0px;
+  right: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
 }
 
 .hero__cta {
   width: 100%;
   max-width: 625px;
   margin-left: 32px;
+  position: relative;
+  z-index: 2;
 }
 
 .hero__title {
@@ -117,6 +125,8 @@ span {
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 3;
 }
 
 .experience {
