@@ -8,8 +8,8 @@ document.querySelector("#githubIcon").src = githubIcon;
 document.querySelector("#arrowIcon").src = arrowIcon;
 
 import * as THREE from "three";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 /**
  * Base
@@ -25,44 +25,88 @@ const scene = new THREE.Scene();
  */
 
 let character = null;
-const fbxLoader = new FBXLoader();
 let mixer = null;
-fbxLoader.load("/models/Idle.fbx", (fbx) => {
-  console.log(fbx)
-  character = fbx;
+let actualCharacterMode = -1;
+
+const gltfLoader = new GLTFLoader();
+gltfLoader.load("/models/characterFinal.gltf", (gltf) => {
+  character = gltf.scene;
   character.position.z = -1.3;
   character.position.y = -1.5;
   character.position.x = -0.6;
-  character.scale.set(0.01, 0.01, 0.01);
   character.rotateY(0.6);
-  character.rotateX(0.2);
+  character.rotateX(0.1);
 
   mixer = new THREE.AnimationMixer(character);
-  const idle = mixer.clipAction(character.animations[0]);
+  const idle = mixer.clipAction(gltf.animations[0]);
   idle.play();
   scene.add(character);
+  updateMaterials(character);
 });
-
-// const gltfLoader = new GLTFLoader();
-// gltfLoader.load('/models/character.glb', (gltf) => {
-//   console.log(gltf)
-//   scene.add(gltf.scene)
-// })
 
 /**
  * Lights
  */
 
-const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+const ambientLight = new THREE.AmbientLight(0x404040, 2);
 scene.add(ambientLight);
 
+const light = new THREE.PointLight(0xffffff, 6, 50);
+light.position.set(1, 1, 1);
+light.castShadow = true;
+light.shadow.bias = -0.002;
+light.shadow.camera.near = 1;
+light.shadow.camera.far = 1;
+light.shadow.camera.fov = 90;
+light.shadow.mapSize.width = 2048;
+light.shadow.mapSize.height = 2048;
+light.shadow.radius = 8;
+scene.add(light);
+const sphereSize = 1;
+const pointLightHelper = new THREE.PointLightHelper(light, sphereSize);
+scene.add(pointLightHelper);
 
-const directionalLight = new THREE.DirectionalLight(
-  0xffffff,
-  0.7
-);
-directionalLight.position.set(1, 0, 4);
-scene.add(directionalLight);
+const directionalLight = new THREE.DirectionalLight( 0xffffff, 3 );
+scene.add( directionalLight );
+
+/**
+ * Click Interation
+ */
+
+const updateMaterials = (scene) => {
+  if (actualCharacterMode === 1) {
+    actualCharacterMode = 0;
+  } else {
+    actualCharacterMode++;
+  }
+
+  let props = {
+    material: null,
+    wireframe: false,
+  };
+  switch (actualCharacterMode) {
+    case 0:
+      props.material = new THREE.MeshStandardMaterial();
+      props.wireframe = false;
+      break;
+    case 1:
+      props.material = new THREE.MeshStandardMaterial();
+      props.wireframe = true;
+      break;
+    // case 2:
+    //   props.material = new THREE.MeshNormalMaterial();
+    //   props.wireframe = false;
+    //   break;
+  }
+
+  scene.traverse((child) => {
+    if (child.material) {
+      child.material.wireframe = props.wireframe;
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+};
 
 /**
  * Objects
@@ -72,7 +116,6 @@ const sphereGeometry = new THREE.SphereBufferGeometry(1, 2, 2);
 const boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
 
 const geometriesArray = [sphereGeometry, boxGeometry];
-console.log(Math.random() * 4);
 
 const boxMaterial = new THREE.MeshBasicMaterial({
   color: "#e57373",
@@ -127,7 +170,6 @@ window.addEventListener("resize", () => {
 
 const mouse = new THREE.Vector2();
 let previousMousePosition = 0;
-console.log(sizes.width / 1000);
 
 const onMouseMove = (event) => {
   mouse.x = event.clientX - sizes.width / 2;
@@ -144,8 +186,14 @@ const onMouseMove = (event) => {
     }
   }
 };
+const onMouseClick = () => {
+  if (character) {
+    updateMaterials(character);
+  }
+};
 
 document.addEventListener("mousemove", onMouseMove, false);
+document.addEventListener("click", onMouseClick, false);
 
 /**
  * Camera
@@ -159,7 +207,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 0;
+camera.position.z = 0.1;
 scene.add(camera);
 
 // Controls
@@ -175,21 +223,20 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setClearColor("#222626");
+renderer.setClearColor("#0e1212");
 renderer.outputEncoding = THREE.sRGBEncoding;
-// renderer.toneMapping = THREE.NoToneMapping;
-// renderer.toneMapping = THREE.LinearToneMapping;
-// renderer.toneMapping = THREE.ReinhardToneMapping;
-// renderer.toneMapping = THREE.CineonToneMapping;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.physicallyCorrectLights = true;
 
 /**
  * Animate
  */
 const clock = new THREE.Clock();
 let lastElapsedTime = 0;
+
+var target = new THREE.Vector3();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
@@ -206,6 +253,9 @@ const tick = () => {
   if (mixer) {
     mixer.update(deltaTime);
   }
+
+  // Update controls
+  // controls.update();
 
   // Render
   renderer.render(scene, camera);
