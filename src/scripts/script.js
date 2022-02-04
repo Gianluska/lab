@@ -40,7 +40,7 @@ gltfLoader.load("/models/characterFinal.gltf", (gltf) => {
   mixer = new THREE.AnimationMixer(character);
   const idle = mixer.clipAction(gltf.animations[0]);
   idle.play();
-  scene.add(character);
+  // scene.add(character);
   updateMaterials(character);
 });
 
