@@ -41,7 +41,7 @@ gltfLoader.load("/models/characterFinal.gltf", (gltf) => {
   const idle = mixer.clipAction(gltf.animations[0]);
   idle.play();
   scene.add(character);
-  updateMaterials(character);
+  // updateMaterials(character);
 });
 
 /**
@@ -51,23 +51,23 @@ gltfLoader.load("/models/characterFinal.gltf", (gltf) => {
 const ambientLight = new THREE.AmbientLight(0x404040, 2);
 scene.add(ambientLight);
 
-const light = new THREE.PointLight(0xffffff, 6, 50);
-light.position.set(1, 1, 1);
-light.castShadow = true;
-light.shadow.bias = -0.002;
-light.shadow.camera.near = 1;
-light.shadow.camera.far = 1;
-light.shadow.camera.fov = 90;
-light.shadow.mapSize.width = 2048;
-light.shadow.mapSize.height = 2048;
-light.shadow.radius = 8;
-scene.add(light);
-const sphereSize = 1;
-const pointLightHelper = new THREE.PointLightHelper(light, sphereSize);
-scene.add(pointLightHelper);
+// const light = new THREE.PointLight(0xffffff, 6, 50);
+// light.position.set(1, 1, 1);
+// light.castShadow = false;
+// light.shadow.bias = -0.002;
+// light.shadow.camera.near = 1;
+// light.shadow.camera.far = 1;
+// light.shadow.camera.fov = 90;
+// light.shadow.mapSize.width = 2048;
+// light.shadow.mapSize.height = 2048;
+// light.shadow.radius = 8;
+// scene.add(light);
+// // const sphereSize = 1;
+// const pointLightHelper = new THREE.PointLightHelper(light, sphereSize);
+// scene.add(pointLightHelper);
 
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 3 );
-scene.add( directionalLight );
+// const directionalLight = new THREE.DirectionalLight( 0xffffff, 3 );
+// scene.add( directionalLight );
 
 /**
  * Click Interation
@@ -191,7 +191,7 @@ const onMouseMove = (event) => {
 };
 const onMouseClick = () => {
   if (character) {
-    updateMaterials(character);
+    // updateMaterials(character);
   }
 };
 
@@ -230,9 +230,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setClearColor("#0e1212");
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.physicallyCorrectLights = true;
+// renderer.shadowMap.enabled = true;
+// renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// renderer.physicallyCorrectLights = true;
 
 /**
  * Animate
