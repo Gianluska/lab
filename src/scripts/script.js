@@ -104,6 +104,9 @@ const updateMaterials = (scene) => {
       child.material.wireframe = props.wireframe;
       child.castShadow = true;
       child.receiveShadow = true;
+      // if (actualCharacterMode === 2) {
+      //   child.material = props.material;
+      // }
     }
   });
 };
@@ -112,35 +115,35 @@ const updateMaterials = (scene) => {
  * Objects
  */
 
-const sphereGeometry = new THREE.SphereBufferGeometry(1, 2, 2);
-const boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+// const sphereGeometry = new THREE.SphereBufferGeometry(1, 2, 2);
+// const boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
 
-const geometriesArray = [sphereGeometry, boxGeometry];
+// const geometriesArray = [sphereGeometry, boxGeometry];
 
-const boxMaterial = new THREE.MeshBasicMaterial({
-  color: "#e57373",
-  wireframe: true,
-  opacity: 0.1,
-  transparent: true,
-});
-let boxMeshArray = new Array(80);
+// const boxMaterial = new THREE.MeshBasicMaterial({
+//   color: "#e57373",
+//   wireframe: true,
+//   opacity: 0.1,
+//   transparent: true,
+// });
+// let boxMeshArray = new Array(80);
 
-const geometryGroup = new THREE.Group();
+// const geometryGroup = new THREE.Group();
 
-for (let i = 0; i < boxMeshArray.length; i++) {
-  const geometry =
-    geometriesArray[Math.floor(Math.random() * geometriesArray.length)];
-  boxMeshArray[i] = new THREE.Mesh(geometry, boxMaterial);
+// for (let i = 0; i < boxMeshArray.length; i++) {
+//   const geometry =
+//     geometriesArray[Math.floor(Math.random() * geometriesArray.length)];
+//   boxMeshArray[i] = new THREE.Mesh(geometry, boxMaterial);
 
-  boxMeshArray[i].position.x = (Math.random() - 0.5) * 3;
-  boxMeshArray[i].position.y = (Math.random() - 0.5) * 3;
-  boxMeshArray[i].position.z = Math.min((Math.random() - 0.5) * 3, -2);
-  boxMeshArray[i].scale.set(0.2, 0.2, 0.2);
+//   boxMeshArray[i].position.x = (Math.random() - 0.5) * 3;
+//   boxMeshArray[i].position.y = (Math.random() - 0.5) * 3;
+//   boxMeshArray[i].position.z = Math.min((Math.random() - 0.5) * 3, -2);
+//   boxMeshArray[i].scale.set(0.2, 0.2, 0.2);
 
-  geometryGroup.add(boxMeshArray[i]);
-}
+//   geometryGroup.add(boxMeshArray[i]);
+// }
 
-scene.add(geometryGroup);
+// scene.add(geometryGroup);
 
 /**
  * Sizes
@@ -193,7 +196,7 @@ const onMouseClick = () => {
 };
 
 document.addEventListener("mousemove", onMouseMove, false);
-document.addEventListener("click", onMouseClick, false);
+canvas.addEventListener("click", onMouseClick, false);
 
 /**
  * Camera
@@ -220,6 +223,7 @@ scene.add(camera);
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
+  autoSize: true
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -243,12 +247,12 @@ const tick = () => {
   const deltaTime = elapsedTime - lastElapsedTime;
   lastElapsedTime = elapsedTime;
 
-  for (let i = 0; i < boxMeshArray.length; i++) {
-    boxMeshArray[i].rotateY(Math.cos(elapsedTime) * 0.00005 * i);
-    boxMeshArray[i].rotateZ(Math.cos(elapsedTime) * 0.00005 * i);
-    boxMeshArray[i].rotateX(Math.cos(elapsedTime) * 0.00005 * i);
-    boxMeshArray[i].position.y += Math.sin(elapsedTime + i) * 0.0005;
-  }
+  // for (let i = 0; i < boxMeshArray.length; i++) {
+  //   boxMeshArray[i].rotateY(Math.cos(elapsedTime) * 0.00005 * i);
+  //   boxMeshArray[i].rotateZ(Math.cos(elapsedTime) * 0.00005 * i);
+  //   boxMeshArray[i].rotateX(Math.cos(elapsedTime) * 0.00005 * i);
+  //   boxMeshArray[i].position.y += Math.sin(elapsedTime + i) * 0.0005;
+  // }
 
   if (mixer) {
     mixer.update(deltaTime);
