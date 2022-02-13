@@ -4,9 +4,10 @@ const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
 
 module.exports = {
-    entry: path.resolve(__dirname, '../src/scripts/script.js'),
+    entry: path.resolve(__dirname, '../src/script.js'),
     output:
     {
+        hashFunction: 'xxhash64',
         filename: 'bundle.[contenthash].js',
         path: path.resolve(__dirname, '../dist')
     },
@@ -31,7 +32,10 @@ module.exports = {
             // HTML
             {
                 test: /\.(html)$/,
-                use: ['html-loader']
+                use:
+                [
+                    'html-loader'
+                ]
             },
 
             // JS
@@ -57,41 +61,21 @@ module.exports = {
             // Images
             {
                 test: /\.(jpg|png|gif|svg)$/,
-                use:
-                [
-                    {
-                        loader: 'file-loader',
-                        options:
-                        {
-                            outputPath: 'assets/images/'
-                        }
-                    }
-                ]
+                type: 'asset/resource',
+                generator:
+                {
+                    filename: 'assets/images/[hash][ext]'
+                }
             },
 
             // Fonts
             {
                 test: /\.(ttf|eot|woff|woff2)$/,
-                use:
-                [
-                    {
-                        loader: 'file-loader',
-                        options:
-                        {
-                            outputPath: 'assets/fonts/'
-                        }
-                    }
-                ]
-            },
-
-            // Shaders
-            {
-                test: /\.(glsl|vs|fs|vert|frag)$/,
-                exclude: /node_modules/,
-                use: [
-                    'raw-loader',
-                    'glslify-loader'
-                ]
+                type: 'asset/resource',
+                generator:
+                {
+                    filename: 'assets/fonts/[hash][ext]'
+                }
             }
         ]
     }
