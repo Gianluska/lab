@@ -28,6 +28,7 @@ function Character(props) {
 
   useEffect(() => {
     console.log(actions["Armature|mixamo.com|Layer0"].play());
+    // eslint-disable-next-line
   }, []);
   return (
     <Float
